@@ -1,24 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Test Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>David Meltonyan | Software Engineer</title>
+  <meta name="description" content="David Meltonyan is a software engineer focused on machine learning and backend engineering. December 2026 Computer Science graduate from Sacramento State, available January 2027.">
+  <meta name="author" content="David Meltonyan">
+  <link rel="canonical" href="https://dmeltonyan.github.io/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="David Meltonyan | Software Engineer">
+  <meta property="og:description" content="Software engineering, machine learning, and backend systems. December 2026 graduate, available January 2027.">
+  <meta property="og:url" content="https://dmeltonyan.github.io/">
+  <meta property="og:image" content="https://dmeltonyan.github.io/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="David Meltonyan, Software Engineer, Machine Learning and Backend Systems">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="David Meltonyan | Software Engineer">
+  <meta name="twitter:description" content="Software engineering, machine learning, and backend systems. December 2026 graduate, available January 2027.">
+  <meta name="twitter:image" content="https://dmeltonyan.github.io/og-image.png">
+
+  <meta name="theme-color" content="#F7F8FA">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "David Meltonyan",
+    "jobTitle": "Software Engineer",
+    "url": "https://dmeltonyan.github.io/",
+    "email": "mailto:dmeltonyan@icloud.com",
+    "address": { "@type": "PostalAddress", "addressLocality": "Sacramento", "addressRegion": "CA", "addressCountry": "US" },
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "California State University, Sacramento" },
+    "knowsAbout": ["Software Engineering", "Machine Learning", "Backend Engineering", "Natural Language Processing"],
+    "sameAs": ["https://github.com/dmeltonyan", "https://www.linkedin.com/in/davidmeltonyan"]
+  }
+  </script>
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <h1>The Sports I Play</h1>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top">David Meltonyan</a>
+      <nav class="site-nav" aria-label="Sections">
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#education">Education</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <a class="btn btn-small btn-quiet" id="nav-resume" href="resume.pdf" target="_blank" rel="noopener" data-track="resume_view" data-track-source="nav">Resume</a>
+      </div>
+    </div>
+  </header>
 
-    <p>
-        I play <strong>soccer</strong> and <strong>poker</strong>. 
-        Soccer is fun because it takes skill, teamwork, and focus. 
-        One of my favorite soccer players is 
-        <a href="https://www.cristianoronaldo.com/" target="_blank">Cristiano Ronaldo</a>.
-        I also enjoy playing poker, especially No-Limit Texas Hold'em. 
-        You can learn how to play here: 
-        <a href="https://www.pokernews.com/poker-rules/texas-holdem.htm" target="_blank">How to Play NLH Poker</a>.
-    </p>
+  <main id="main" tabindex="-1">
+    <div id="home"></div>
+    <div id="case-study" hidden></div>
 
-    <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d" 
-         alt="Soccer field" width="500">
+    <noscript>
+      <div class="container noscript">
+        <h1>David Meltonyan</h1>
+        <p>Software Engineer, Machine Learning and Backend Systems. Graduating December 2026 from Sacramento State, available January 2027.</p>
+        <p><a href="resume.pdf">Resume</a> | <a href="mailto:dmeltonyan@icloud.com">dmeltonyan@icloud.com</a> | <a href="https://github.com/dmeltonyan">GitHub</a> | <a href="https://www.linkedin.com/in/davidmeltonyan">LinkedIn</a></p>
+      </div>
+    </noscript>
+  </main>
 
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>David Meltonyan</p>
+      <p id="last-updated"></p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
