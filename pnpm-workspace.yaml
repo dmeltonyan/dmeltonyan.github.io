@@ -1,5 +1,6 @@
 packages:
   - .
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+# Native install scripts these packages ship are not needed for a static export.
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
