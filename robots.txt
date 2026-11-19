@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://dmeltonyan.github.io/sitemap.xml
+Sitemap: https://meltonyan.dev/sitemap.xml
