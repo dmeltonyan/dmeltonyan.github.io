@@ -1,0 +1,59 @@
+---
+slug: 'costmelt'
+title: 'Cost Melt: a drop-in proxy that cuts LLM costs'
+description: 'An HTTP proxy between an app and LLM providers that routes each prompt to the cheapest capable model, serves repeats from a semantic cache, compresses prompts and micro-batches requests.'
+organisation: 'Personal project'
+role: 'Backend, solo'
+duration: 'Source on GitHub'
+tools: ['Python', 'FastAPI', 'Redis', 'PostgreSQL + pgvector', 'Next.js', 'Docker']
+publishedAt: '2025-11-01'
+order: 2
+image: '/images/projects/costmelt-card.webp'
+heroImage: '/images/projects/costmelt-cover.webp'
+logo: '/images/logos/costmelt.png'
+repoUrl: 'https://github.com/dmeltonyan/costmelt'
+---
+
+## Problem
+
+Teams building on LLMs often send every request to their most capable model, including the many prompts a much cheaper model would handle just as well. They also pay again and again for near-identical prompts. Fixing that usually means changing application code in many places.
+
+## What I built
+
+A proxy that sits between an application and its LLM providers. The app changes one URL, and every request goes through the same pipeline:
+
+1. **Semantic cache.** If a similar prompt was answered recently, return the cached answer at near-zero cost.
+2. **Prompt compression.** Rule-based trimming plus LLM summarization, keeping instructions intact.
+3. **Complexity classification.** An "overkill detector" scores the prompt 0, 1 or 2 from signals such as token count, code patterns and reasoning cues.
+4. **Routing.** Pick the cheapest model that can handle that complexity, across OpenAI, Anthropic, Groq and DeepSeek, taking provider health into account.
+5. **Micro-batching and logging.** Group compatible requests, then record tokens, cost and savings per request.
+
+Every response comes back with metadata: which model was used, whether it was a cache hit, tokens in and out, and actual cost against a baseline.
+
+## Architecture
+
+- **Backend:** FastAPI gateway orchestrating the routing engine, compressor, cache and batch queue
+- **Cache:** embeddings stored in Supabase Postgres with pgvector for similarity search; Redis handles TTL and LRU eviction
+- **Batch queue:** Redis-backed, flushed on a short window or when a batch fills
+- **Dashboard:** Next.js analytics for savings over time, model mix, cache hit rate and complexity distribution
+- **Packaging:** Docker Compose brings up the backend, dashboard, landing page and Redis together
+
+## Key decisions
+
+### A proxy, not an SDK
+
+Integrating should be a one-line change. Putting the optimizations behind an HTTP endpoint means any language or framework can use them without new client code.
+
+### Cache before compressing
+
+Checking the cache first means a hit skips every other step, including the compression call itself.
+
+### Tunable thresholds
+
+The similarity threshold (0.92 by default), cache TTL, batch window and maximum batch size are all configuration, because the right trade-off between savings and answer quality depends on the workload.
+
+## What's next
+
+- Benchmarks on real traffic to measure savings, rather than estimating them
+- Training the complexity classifier on logged requests
+- Per-user budgets and rate limits

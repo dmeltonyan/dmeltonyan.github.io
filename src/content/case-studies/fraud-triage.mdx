@@ -1,0 +1,84 @@
+---
+slug: 'fraud-triage'
+title: 'Fraud Triage: deciding what to do with a fraud score'
+description: 'A LightGBM model plus a cost-based policy that decides approve, review or block under a fixed daily analyst budget. 66% lower total cost than reviewing the highest-probability cases.'
+organisation: 'Personal project'
+role: 'ML + full stack, solo'
+duration: 'Live demo'
+tools: ['Python', 'LightGBM', 'SHAP', 'DuckDB', 'FastAPI', 'PostgreSQL', 'Next.js', 'Playwright']
+publishedAt: '2026-10-01'
+order: 1
+image: '/images/projects/fraud-triage-card.webp'
+heroImage: '/images/projects/fraud-triage-cover.webp'
+logo: '/images/logos/fraud-triage.png'
+liveUrl: 'https://fraud-triage-theta.vercel.app'
+repoUrl: 'https://github.com/dmeltonyan/fraud-triage'
+---
+
+## Problem
+
+Fraud models are easy to train and hard to act on. Fraud is rare here, about 1 in 190 transactions, so a model that never flags anything is 99.5% accurate and useless. Analysts can only check a few cases a day, so the real question isn't "is this fraud?" but "which cases deserve a person's time?"
+
+The usual answer is to review the highest-scoring transactions. That spends review slots on small purchases that happen to look suspicious.
+
+## What I built
+
+A system that turns a fraud probability into one of three actions by comparing expected dollar costs:
+
+- **Approve** costs probability × amount, the fraud you would lose
+- **Review** costs $5 of analyst time
+- **Block** costs (1 − probability) × $10 for turning away a real customer
+
+Each transaction gets the cheapest action, and each day's 30 review slots go to the cases where a review saves the most. Analysts work through a review app that shows the three reasons behind each score and the cost of each action.
+
+<div className='my-16 grid gap-4 sm:grid-cols-2'>
+  <div className='bg-card relative w-full overflow-hidden rounded-3xl p-1.5 dark:bg-white/10'>
+    <img src='/images/case-study/fraud-triage/queue.webp' alt='The daily review queue, ranked by expected loss' className='w-full rounded-3xl' />
+  </div>
+  <div className='bg-card relative w-full overflow-hidden rounded-3xl p-1.5 dark:bg-white/10'>
+    <img src='/images/case-study/fraud-triage/case.webp' alt='A single case: why the model flagged it and what the policy decided' className='w-full rounded-3xl' />
+  </div>
+</div>
+
+## Results
+
+Tested on three held-out months, October to December 2020: 281,521 transactions, 936 frauds worth $489,894. Every policy gets the same 30 reviews a day.
+
+| Policy | Fraud lost | Reviews | Customers declined | Total cost |
+| --- | --- | --- | --- | --- |
+| Approve everything | $489,894 | 0 | 0 | $489,894 |
+| Review highest probabilities | $24,164 | 2,760 | 0 | $37,964 |
+| Review highest expected dollars | $10,563 | 2,052 | 0 | $20,823 |
+| **Cost-based: approve, review or block** | **$4,527** | **1,419** | **114** | **$12,762** |
+
+The model itself reaches a test PR-AUC of 0.838 against 0.376 for a logistic regression baseline, and reviewing the riskiest 1% of transactions catches 93.3% of fraud.
+
+<div className='bg-card relative my-16 w-full overflow-hidden rounded-3xl p-1.5 dark:bg-white/10'>
+  <img src='/images/case-study/fraud-triage/budget_curve.webp' alt='Fraud lost as the daily review budget changes, for each policy' className='w-full rounded-3xl' />
+</div>
+
+## Key decisions
+
+### Time-based splits only
+
+Train on January 2019 to June 2020, tune on July to August, calibrate on September, test on October to December. A random split would let the model learn from the future.
+
+### Leak-free features, with a test that proves it
+
+Every history window ends one microsecond before the current transaction. A test adds a later transaction and checks that no earlier feature changes.
+
+### Calibrated probabilities
+
+The policy multiplies probability by amount, so probabilities have to match real fraud rates. Training weighted fraud 13 times, which made raw scores about twice too high; Platt scaling on a held-out month fixes that.
+
+> Probability ranking wastes review slots on small purchases. Ranking by expected dollars, with the same budget, cuts fraud lost by more than half.
+
+### Score offline, serve precomputed results
+
+The deployed API never loads LightGBM or SHAP, so it fits on free hosting. A test checks that production mode never imports them.
+
+## Limitations
+
+- No fraud in the dataset is above $1,376, so the model learned that very large purchases are safe. Real fraudsters would exploit that.
+- The $5 review and $10 decline costs are assumptions. The conclusion holds when the review cost is halved or doubled and when the decline cost rises to $50 or $100, though blocking becomes much more cautious.
+- The data is the public Kaggle Sparkov simulation, not real card data.

@@ -1,0 +1,49 @@
+---
+slug: 'reachscout'
+title: 'ReachScout: evidence-backed professional research'
+description: 'Finds the right recruiter, hiring manager or founder from public sources, shows the evidence behind every data point, and drafts a context-aware introduction. Built to be explicitly not a scraper or spam tool.'
+organisation: 'Personal project'
+role: 'Full stack, solo'
+duration: 'Source on GitHub'
+tools: ['TypeScript', 'Next.js 15', 'Supabase', 'Prisma', 'Claude API', 'Vitest', 'Playwright']
+publishedAt: '2026-07-01'
+order: 3
+image: '/images/projects/reachscout-card.webp'
+heroImage: '/images/projects/reachscout-cover.webp'
+logo: '/images/logos/reachscout.png'
+repoUrl: 'https://github.com/dmeltonyan/reachscout'
+---
+
+## Problem
+
+Finding the right person to contact at a company, and having something genuine to say, takes a lot of manual searching. Most tools that automate it scrape private data or guess email addresses and present the guesses as fact.
+
+## What I built
+
+A research assistant with a five-stage search pipeline:
+
+1. **Normalize** the organisation name
+2. **Generate queries**, stripping dangerous search operators
+3. **Retrieve** publicly available results through a swappable search provider
+4. **Extract** professional profiles, keeping the source for each data point
+5. **Rank and deduplicate**, merging profiles that describe the same person
+
+Each contact gets a 0 to 100 confidence score with a plain-English explanation of which public source supports which fact. Outreach drafts are generated with Claude, with templates as a fallback when no API key is set.
+
+## Honesty built into the data model
+
+- Emails are always labeled as publicly listed, verified, general contact, or pattern estimate
+- Pattern estimates are hidden by default, never marked verified, and excluded from CSV exports
+- A suppression list records "do not contact" requests with a reason
+- Nothing is sent automatically
+
+## Security
+
+- Every outbound URL is checked against a private-network blocklist before fetching (SSRF protection)
+- Supabase row-level security on all user data, plus ownership checks on every API route
+- Per-user rate limits on searches, profile lookups, verifications and exports
+- No API keys or email bodies in logs
+
+## Testing
+
+Unit and integration tests with Vitest and end-to-end tests with Playwright cover the cases that matter most: duplicate profiles merge, official emails are labeled correctly, pattern estimates are never labeled verified, private-network URLs are rejected, and invalid input is refused. A demo mode with fictional contacts on example.com domains runs without any API keys.
